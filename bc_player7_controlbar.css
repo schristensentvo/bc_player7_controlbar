@@ -1,0 +1,38 @@
+/*
+ * TVO Brightcove Player 7 control-bar overrides
+ *
+ * - Hides redundant standalone Captions and Described Video controls.
+ * - Keeps those functions available through the Settings menu.
+ * - Positions the existing Transcript control in the right-side group.
+ * - Replaces Brightcove's decorative AD mask in the Audio menu with DV.
+ */
+
+/* Hide duplicate standalone controls for all users, including AT/keyboard users. */
+.video-js .vjs-modern-captions-button,
+.video-js .vjs-described-video-menu-button {
+    display: none !important;
+}
+
+/* The JS companion physically moves Transcript before Chromecast for DOM/tab order. */
+.video-js .vjs-transcript-control {
+    order: 16 !important;
+    transform: translateY(-2px);
+}
+
+/*
+ * Replace Player 7's decorative AD speech-bubble mask with a matching 20x20 DV mask.
+ * The existing .vjs-modern-audio-desc-icon element already has aria-hidden="true".
+ */
+.video-js .vjs-modern-audio-desc-icon {
+    background: currentColor !important;
+
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M16.5996%2015.5V17H10L6.60145%2019.379C5.93329%2019.8467%205.01637%2019.3609%205.02809%2018.5454L5.05029%2017H3.40039V15.5H5.5C6.05228%2015.5%206.5%2015.9477%206.5%2016.5V17.5L9.76943%2015.6318C9.92052%2015.5454%2010.0915%2015.5%2010.2656%2015.5H16.5996ZM17.5%2014.667V5.33301C17.4998%204.91244%2017.1366%204.5%2016.5996%204.5H3.40039C2.86336%204.5%202.50019%204.91244%202.5%205.33301V14.667C2.50019%2015.0876%202.86336%2015.5%203.40039%2015.5V17L3.1543%2016.9883C2.02492%2016.8766%201.12743%2016.0033%201.0127%2014.9053L1%2014.667V5.33301C1.00017%204.12513%201.94433%203.13132%203.1543%203.01172L3.40039%203H16.5996C17.925%203%2018.9998%204.04449%2019%205.33301V14.667L18.9873%2014.9053C18.8644%2016.0818%2017.8422%2017%2016.5996%2017V15.5C17.1366%2015.5%2017.4998%2015.0876%2017.5%2014.667Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M4.6%207H6.55C8.45%207%209.65%208.15%209.65%2010C9.65%2011.85%208.45%2013%206.55%2013H4.6V7ZM5.75%208V12H6.48C7.72%2012%208.48%2011.28%208.48%2010C8.48%208.72%207.72%208%206.48%208H5.75Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M10.15%207H11.4L13.05%2011.55L14.7%207H15.95L13.65%2013H12.45L10.15%207Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E") !important;
+    mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M16.5996%2015.5V17H10L6.60145%2019.379C5.93329%2019.8467%205.01637%2019.3609%205.02809%2018.5454L5.05029%2017H3.40039V15.5H5.5C6.05228%2015.5%206.5%2015.9477%206.5%2016.5V17.5L9.76943%2015.6318C9.92052%2015.5454%2010.0915%2015.5%2010.2656%2015.5H16.5996ZM17.5%2014.667V5.33301C17.4998%204.91244%2017.1366%204.5%2016.5996%204.5H3.40039C2.86336%204.5%202.50019%204.91244%202.5%205.33301V14.667C2.50019%2015.0876%202.86336%2015.5%203.40039%2015.5V17L3.1543%2016.9883C2.02492%2016.8766%201.12743%2016.0033%201.0127%2014.9053L1%2014.667V5.33301C1.00017%204.12513%201.94433%203.13132%203.1543%203.01172L3.40039%203H16.5996C17.925%203%2018.9998%204.04449%2019%205.33301V14.667L18.9873%2014.9053C18.8644%2016.0818%2017.8422%2017%2016.5996%2017V15.5C17.1366%2015.5%2017.4998%2015.0876%2017.5%2014.667Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M4.6%207H6.55C8.45%207%209.65%208.15%209.65%2010C9.65%2011.85%208.45%2013%206.55%2013H4.6V7ZM5.75%208V12H6.48C7.72%2012%208.48%2011.28%208.48%2010C8.48%208.72%207.72%208%206.48%208H5.75Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M10.15%207H11.4L13.05%2011.55L14.7%207H15.95L13.65%2013H12.45L10.15%207Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E") !important;
+
+    -webkit-mask-repeat: no-repeat !important;
+    mask-repeat: no-repeat !important;
+    -webkit-mask-position: center !important;
+    mask-position: center !important;
+    -webkit-mask-size: 20px 20px !important;
+    mask-size: 20px 20px !important;
+}

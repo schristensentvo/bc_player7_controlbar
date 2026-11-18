@@ -1,15 +1,15 @@
-(function () {
-    'use strict';
+videojs.registerPlugin('bc_player7_controlbar', function () {
+    var player = this;
+    var observer = null;
+    var timeout = null;
 
-    var OBSERVER_TIMEOUT_MS = 15000;
+    function positionTranscriptButton() {
+        var playerElement = player.el();
 
-    /**
-     * Moves the existing Transcript button immediately before Chromecast.
-     *
-     * Moving the actual DOM element, rather than only using CSS order,
-     * keeps keyboard focus order consistent with the visual order.
-     */
-    function positionTranscriptButton(playerElement) {
+        if (!playerElement) {
+            return false;
+        }
+
         var transcriptButton = playerElement.querySelector(
             '.vjs-transcript-control'
         );
@@ -29,8 +29,8 @@
         }
 
         /*
-         * This operation is safe to repeat. If Transcript is already directly
-         * before Chromecast, no additional move is required.
+         * Move the actual Transcript button immediately before Chromecast.
+         * This keeps keyboard/DOM order consistent with visual order.
          */
         if (transcriptButton.nextElementSibling !== chromecastButton) {
             controlBar.insertBefore(transcriptButton, chromecastButton);
@@ -39,45 +39,41 @@
         return true;
     }
 
-    function customizePlayer(player) {
-        var playerElement = player.el();
-
-        if (!playerElement) {
+    player.ready(function () {
+        /*
+         * The existing Transcript plugin and Chromecast plugin may finish
+         * creating their controls after this plugin initializes.
+         */
+        if (positionTranscriptButton()) {
             return;
         }
 
-        /*
-         * Run immediately in case both controls have already been created.
-         */
-        if (positionTranscriptButton(playerElement)) {
-            return;
-        }
-
-        /*
-         * Transcript and Chromecast are created by separate plugins and may
-         * not exist when this script first runs. Observe the player until both
-         * controls become available.
-         */
-        var observer = new MutationObserver(function () {
-            if (positionTranscriptButton(playerElement)) {
+        observer = new MutationObserver(function () {
+            if (positionTranscriptButton()) {
                 observer.disconnect();
+                observer = null;
+
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
             }
         });
 
-        observer.observe(playerElement, {
+        observer.observe(player.el(), {
             childList: true,
             subtree: true
         });
 
         /*
-         * Avoid leaving an observer running indefinitely if one of the
-         * required plugins is not enabled on this player.
+         * Don't leave the observer running forever if one of the expected
+         * controls is unavailable.
          */
-        window.setTimeout(function () {
-            observer.disconnect();
-        }, OBSERVER_TIMEOUT_MS);
-    }
-
-    function initialize() {
-        if (typeof videojs === 'undefined') {
-            return;
+        timeout = setTimeout(function () {
+            if (observer) {
+                observer.disconnect();
+                observer = null;
+            }
+        }, 15000);
+    });
+});

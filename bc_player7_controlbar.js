@@ -3,6 +3,34 @@ videojs.registerPlugin('bc_player7_controlbar', function () {
     var observer = null;
     var timeout = null;
 
+    /*
+     * A transcript exists only if the video has a metadata track
+     * labelled "Description". Thumbnail tracks are also kind=metadata,
+     * so the label check is required.
+     */
+    function hasDescriptionTrack() {
+        var tracks = (player.mediainfo && player.mediainfo.text_tracks) || [];
+
+        return tracks.some(function (track) {
+            return track &&
+                track.kind === 'metadata' &&
+                typeof track.label === 'string' &&
+                track.label.trim().toLowerCase() === 'description';
+        });
+    }
+
+    /*
+     * Toggle a class on the player. The CSS hides Transcript when the
+     * class is present, even if the shared plugin re-inserts the button.
+     */
+    function updateTranscriptVisibility() {
+        if (hasDescriptionTrack()) {
+            player.removeClass('tvo-no-transcript');
+        } else {
+            player.addClass('tvo-no-transcript');
+        }
+    }
+
     function positionTranscriptButton() {
         var playerElement = player.el();
 
@@ -39,11 +67,13 @@ videojs.registerPlugin('bc_player7_controlbar', function () {
         return true;
     }
 
+    // Re-check on every video load (covers playlists and video changes).
+    player.on('loadstart', updateTranscriptVisibility);
+    player.on('loadedmetadata', updateTranscriptVisibility);
+
     player.ready(function () {
-        /*
-         * The existing Transcript plugin and Chromecast plugin may finish
-         * creating their controls after this plugin initializes.
-         */
+        updateTranscriptVisibility();
+
         if (positionTranscriptButton()) {
             return;
         }
@@ -65,10 +95,6 @@ videojs.registerPlugin('bc_player7_controlbar', function () {
             subtree: true
         });
 
-        /*
-         * Don't leave the observer running forever if one of the expected
-         * controls is unavailable.
-         */
         timeout = setTimeout(function () {
             if (observer) {
                 observer.disconnect();

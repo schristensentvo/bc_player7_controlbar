@@ -5,6 +5,7 @@
  * - Keeps those functions available through the Settings menu.
  * - Positions the existing Transcript control in the right-side group.
  * - Replaces Brightcove's decorative AD mask in the Audio menu with DV.
+ * - Hides transcript button when no transcript is present
  */
 
 /* Hide duplicate standalone controls for all users, including AT/keyboard users. */
@@ -35,4 +36,13 @@
     mask-position: center !important;
     -webkit-mask-size: 20px 20px !important;
     mask-size: 20px 20px !important;
+}
+
+/*
+ * Hide Transcript when the current video has no metadata track
+ * labelled "Description". display:none also removes it from
+ * keyboard navigation and screen readers.
+ */
+.video-js.tvo-no-transcript .vjs-transcript-control {
+    display: none !important;
 }
